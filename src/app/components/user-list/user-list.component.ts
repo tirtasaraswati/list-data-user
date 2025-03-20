@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { catchError, of, tap, map, switchMap, startWith } from 'rxjs';
@@ -17,6 +17,13 @@ export class UserListComponent {
 
   errorMessage = '';
   loading = true;
+
+  isMobile = window.innerWidth <= 768;
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
 
   users$ = this.userService.getListUser().pipe(
     tap(() => (this.loading = false)),

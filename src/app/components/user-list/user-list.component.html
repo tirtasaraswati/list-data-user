@@ -1,40 +1,69 @@
 <div class="user-list-container">
-  <h2>User List</h2>
+  <h2 class="title">User List</h2>
 
-  <input
-    type="text"
-    placeholder="Search users..."
-    (input)="searchDataUsers($event)"
-  />
+  <div class="search-container">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search users..."
+      (input)="searchDataUsers($event)"
+    />
+  </div>
 
   <p *ngIf="loading" class="loading">Loading data...</p>
   <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
 
-  <!-- <ng-container *ngIf="users$ | async as users"> Show all user - without search -->
-  <ng-container *ngIf="filteredUsers$ | async as users">
-    <table *ngIf="users.length > 0; else noData">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Website</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.website }}</td>
-          <td>
-            <button (click)="detailDataUser(user.id)" class="btn-detail">
-              View Details
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </ng-container>
+  <!-- Desktop View -->
+  <div *ngIf="!isMobile" class="table-container">
+    <!-- <ng-container *ngIf="users$ | async as users"> Show all user - without search -->
+    <ng-container *ngIf="filteredUsers$ | async as users">
+      <table *ngIf="users.length > 0; else noData">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Website</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.website }}</td>
+            <td>
+              <button (click)="detailDataUser(user.id)" class="btn-detail">
+                View Details
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+
+  <!-- Mobile View -->
+  <div class="card-container" *ngIf="isMobile">
+    <ng-container *ngIf="filteredUsers$ | async as users">
+      <div class="user-card" *ngFor="let user of users">
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p>
+          <strong>Website:</strong>
+          <a
+            [href]="'https://' + user.website"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ user.website }}
+          </a>
+        </p>
+        <button (click)="detailDataUser(user.id)" class="btn-detail">
+          View Details
+        </button>
+      </div>
+    </ng-container>
+  </div>
 
   <ng-template #noData>
     <p *ngIf="!loading && !errorMessage" class="error">
