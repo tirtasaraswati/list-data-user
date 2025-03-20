@@ -1,20 +1,29 @@
-<table border="1">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Website</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let user of users">
-      <td>{{ user.name }}</td>
-      <td>{{ user.email }}</td>
-      <td>
-        <a [href]="'https://' + user.website" target="_blank">{{
-          user.website
-        }}</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<p *ngIf="loading" class="loading-text">Loading data...</p>
+<p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
+
+<ng-container *ngIf="users$ | async as users">
+  <table *ngIf="users.length > 0; else noData" border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Website</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <a [href]="'https://' + user.website" target="_blank">{{
+            user.website
+          }}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #noData>
+  <p *ngIf="!loading && !errorMessage">No users available.</p>
+</ng-template>
