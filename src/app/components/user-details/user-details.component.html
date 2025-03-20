@@ -1,0 +1,40 @@
+<div class="user-details" *ngIf="user$ | async as user; else loadingOrError">
+  <h2>User Details</h2>
+  <div class="user-card">
+    <p><strong>ID:</strong> {{ user.id }}</p>
+    <p><strong>Name:</strong> {{ user.name }}</p>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <div class="address">
+      <h3>Address</h3>
+      <p>{{ user.address?.street }}, {{ user.address?.suite }}</p>
+      <p>{{ user.address?.city }}, {{ user.address?.zipcode }}</p>
+    </div>
+
+    <div class="contact">
+      <p><strong>Phone:</strong> {{ user.phone }}</p>
+      <p>
+        <strong>Website:</strong>
+        <a [href]="'https://' + user.website" target="_blank">
+          {{ user.website }}
+        </a>
+      </p>
+    </div>
+
+    <div class="company">
+      <h3>Company</h3>
+      <p>
+        <strong>{{ user.company?.name }}</strong>
+      </p>
+      <p>{{ user.company?.catchPhrase }}</p>
+    </div>
+
+    <button (click)="goBack()" class="btn-back">Back to List</button>
+  </div>
+</div>
+
+<ng-template #loadingOrError>
+  <p *ngIf="loading">Loading user details...</p>
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+</ng-template>
