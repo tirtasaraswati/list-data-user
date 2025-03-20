@@ -10,8 +10,8 @@
     />
   </div>
 
-  <p *ngIf="loading" class="loading">Loading data...</p>
-  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  <p *ngIf="loading$ | async" class="loading">Loading data...</p>
+  <p *ngIf="error$ | async as errorMessage" class="error">{{ errorMessage }}</p>
 
   <!-- Desktop View -->
   <div *ngIf="!isMobile" class="table-container">
@@ -66,7 +66,14 @@
   </div>
 
   <ng-template #noData>
-    <p *ngIf="!loading && !errorMessage" class="error">
+    <p
+      *ngIf="
+        !(loading$ | async) &&
+        !(error$ | async) &&
+        (filteredUsers$ | async)?.length === 0
+      "
+      class="error"
+    >
       No user data available.
     </p>
   </ng-template>

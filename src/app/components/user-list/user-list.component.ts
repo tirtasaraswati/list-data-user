@@ -1,8 +1,17 @@
-import { Component, inject, HostListener  } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
-import { catchError, of, tap, map, switchMap, startWith } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  of,
+  tap,
+  map,
+  switchMap,
+  startWith,
+} from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-user-list',
@@ -15,9 +24,6 @@ export class UserListComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  errorMessage = '';
-  loading = true;
-
   isMobile = window.innerWidth <= 768;
 
   @HostListener('window:resize', ['$event'])
@@ -25,14 +31,29 @@ export class UserListComponent {
     this.isMobile = window.innerWidth <= 768;
   }
 
-  users$ = this.userService.getListUser().pipe(
-    tap(() => (this.loading = false)),
-    catchError((error) => {
-      this.loading = false;
-      this.errorMessage = error.message || 'Failed to load users!';
-      return of([]);
-    })
-  );
+  /* Using - State management */
+  users$: Observable<User[]> = this.userService.users$;
+  loading$: Observable<boolean> = this.userService.loading$;
+  error$: Observable<string> = this.userService.error$;
+
+  ngOnInit() {
+    if (this.userService.checkUsersData.length === 0) {
+      this.userService.getListUser();
+    }
+  }
+
+  /* Not Using - State management */
+  // errorMessage = '';
+  // loading = true;
+
+  // users$ = this.userService.getListUser().pipe(
+  //   tap(() => (this.loading = false)),
+  //   catchError((error) => {
+  //     this.loading = false;
+  //     this.errorMessage = error.message || 'Failed to load users!';
+  //     return of([]);
+  //   })
+  // );
 
   searchQueryParam$ = this.route.queryParamMap.pipe(
     map((params) => params.get('search') || '')
