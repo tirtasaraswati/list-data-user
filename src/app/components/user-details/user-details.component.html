@@ -1,33 +1,61 @@
 <div class="user-details" *ngIf="user$ | async as user; else loadingOrError">
-  <h2>User Details</h2>
-  <div class="user-card">
-    <p><strong>ID:</strong> {{ user.id }}</p>
-    <p><strong>Name:</strong> {{ user.name }}</p>
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
+  <h2 class="title">User Details</h2>
+  <div class="user-info">
+    <div class="field">
+      <div class="label">ID:</div>
+      <div class="data">{{ user.id }}</div>
+    </div>
+    <div class="field">
+      <div class="label">Name:</div>
+      <div class="data">{{ user.name }}</div>
+    </div>
+    <div class="field">
+      <div class="label">Username:</div>
+      <div class="data">{{ user.username }}</div>
+    </div>
+    <div class="field">
+      <div class="label">Email:</div>
+      <div class="data">{{ user.email }}</div>
+    </div>
+    <div class="field">
+      <div class="label">Phone:</div>
+      <div class="data">{{ user.phone }}</div>
+    </div>
+    <div class="field">
+      <div class="label">Website:</div>
+      <div class="data">
+        <a [href]="'https://' + user.website" target="_blank">{{
+          user.website
+        }}</a>
+      </div>
+    </div>
 
     <div class="address">
       <h3>Address</h3>
-      <p>{{ user.address?.street }}, {{ user.address?.suite }}</p>
-      <p>{{ user.address?.city }}, {{ user.address?.zipcode }}</p>
-    </div>
-
-    <div class="contact">
-      <p><strong>Phone:</strong> {{ user.phone }}</p>
-      <p>
-        <strong>Website:</strong>
-        <a [href]="'https://' + user.website" target="_blank">
-          {{ user.website }}
-        </a>
-      </p>
+      <div class="field">
+        <div class="label">Street:</div>
+        <div class="data">
+          {{ user.address?.street }}, {{ user.address?.suite }}
+        </div>
+      </div>
+      <div class="field">
+        <div class="label">City:</div>
+        <div class="data">
+          {{ user.address?.city }}, {{ user.address?.zipcode }}
+        </div>
+      </div>
     </div>
 
     <div class="company">
       <h3>Company</h3>
-      <p>
-        <strong>{{ user.company?.name }}</strong>
-      </p>
-      <p>{{ user.company?.catchPhrase }}</p>
+      <div class="field">
+        <div class="label">Company Name:</div>
+        <div class="data">{{ user.company?.name }}</div>
+      </div>
+      <div class="field">
+        <div class="label">Catchphrase:</div>
+        <div class="data">{{ user.company?.catchPhrase }}</div>
+      </div>
     </div>
 
     <button (click)="goBack()" class="btn-back">Back to List</button>
