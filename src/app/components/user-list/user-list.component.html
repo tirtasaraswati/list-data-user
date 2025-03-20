@@ -1,10 +1,17 @@
 <div class="user-list-container">
   <h2>User List</h2>
 
+  <input
+    type="text"
+    placeholder="Search users..."
+    (input)="searchDataUsers($event)"
+  />
+
   <p *ngIf="loading" class="loading">Loading data...</p>
   <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
 
-  <ng-container *ngIf="users$ | async as users">
+  <!-- <ng-container *ngIf="users$ | async as users"> Show all user - without search -->
+  <ng-container *ngIf="filteredUsers$ | async as users">
     <table *ngIf="users.length > 0; else noData">
       <thead>
         <tr>

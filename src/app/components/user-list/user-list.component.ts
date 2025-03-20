@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
-import { Observable, catchError, of, tap } from 'rxjs';
-import { User } from '../../models/user.model';
-import { Router } from '@angular/router';
+import { catchError, of, tap, map, switchMap, startWith } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
@@ -14,23 +13,44 @@ import { Router } from '@angular/router';
 export class UserListComponent {
   private userService = inject(UserService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  users$!: Observable<User[]>;
   errorMessage = '';
   loading = true;
 
-  constructor() {}
+  users$ = this.userService.getListUser().pipe(
+    tap(() => (this.loading = false)),
+    catchError((error) => {
+      this.loading = false;
+      this.errorMessage = error.message || 'Failed to load users!';
+      return of([]);
+    })
+  );
 
-  ngOnInit() {
-    this.users$ = this.userService.getListUser().pipe(
-      tap(() => (this.loading = false)),
-      catchError((error) => {
-        this.loading = false;
-        this.errorMessage =
-          error.message || 'Failed to get data User. Please try again later!';
-        return of([]);
-      })
-    );
+  searchQueryParam$ = this.route.queryParamMap.pipe(
+    map((params) => params.get('search') || '')
+  );
+
+  filteredUsers$ = this.searchQueryParam$.pipe(
+    switchMap((search) =>
+      this.users$.pipe(
+        map((users) =>
+          users.filter((user) =>
+            user.name.toLowerCase().includes(search.toLowerCase())
+          )
+        )
+      )
+    ),
+    startWith([])
+  );
+
+  searchDataUsers(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const searchValue = inputElement.value;
+    this.router.navigate([], {
+      queryParams: { search: searchValue },
+      queryParamsHandling: 'merge',
+    });
   }
 
   detailDataUser(userId: number) {
